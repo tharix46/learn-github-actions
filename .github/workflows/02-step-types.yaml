@@ -6,6 +6,7 @@ jobs:
   # say hello using inline bash
   say-hello-inline-bash:
     runs-on: ubuntu-latest
+
     steps:
       - name: Run a one-line bash
         run: echo "Hello from an inline bash script in a GitHub Action workflow!"
@@ -13,6 +14,7 @@ jobs:
   # say hello using python shell
   say-hello-inline-python:
     runs-on: ubuntu-latest
+
     steps:
       - name: Run a one-line python
         run: print("Hello from an inline python script in a GitHub Action workflow!")
@@ -21,6 +23,7 @@ jobs:
   # say hello using a javascript action
   say-hello-action-javascript:
     runs-on: ubuntu-latest
+
     steps:
       - name: Say Hello via a Javascript Action
         uses: actions/hello-world-javascript-action@main
