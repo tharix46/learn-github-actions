@@ -1,4 +1,4 @@
-name: Order of Jobs
+name: 03-Job-Execution-Order
 
 on:
   workflow_dispatch:
