@@ -22,9 +22,9 @@ on:
       - "!trigger-events/*.md"
 
   # schedule to run at specific times
-  schedule:
-    # midnight UTC
-    - cron: "0 0 * * *"
+  # schedule:
+  #   # midnight UTC
+  #   - cron: "0 0 * * *"
 
   # manual trigger
   workflow_dispatch:
