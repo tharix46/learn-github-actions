@@ -1,0 +1,40 @@
+name: 04-Triggering-Events
+
+on:
+  # push event trigger
+  push:
+    branches:
+      - "example-branch/trigger"
+
+  # pull_request event trigger
+  pull_request:
+    # default is to trigger on the following types of events
+    types:
+      - opened
+      - synchronize
+      - reopened
+    branches:
+      - main
+    paths:
+      # include .txt files
+      - "trigger-events/*.txt"
+      # exclude .md files
+      - "!trigger-events/*.md"
+
+  # schedule to run at specific times
+  schedule:
+    # midnight UTC
+    - cron: "0 0 * * *"
+
+  # manual trigger
+  workflow_dispatch:
+
+jobs:
+  echo-event:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Show full event in JSON
+        run: |
+          echo "=== $GITHUB_EVENT_NAME payload ==="
+          cat "$GITHUB_EVENT_PATH"
