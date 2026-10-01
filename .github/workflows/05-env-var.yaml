@@ -9,7 +9,7 @@ env:
 
 jobs:
   job-1:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     # environment variable (scope: job-1)
     env:
@@ -32,7 +32,7 @@ jobs:
           echo "STEP_VAR:     ${STEP_VAR:-<UNSET>}"        # not set here
 
   job-2:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Inspect scopes - job 2 step 1
