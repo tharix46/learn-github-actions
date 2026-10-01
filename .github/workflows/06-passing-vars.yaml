@@ -1,0 +1,41 @@
+name: 06-Passing-Variables-Between-Steps-and-Jobs
+on:
+  workflow_dispatch:
+
+jobs:
+  producer:
+    runs-on: ubuntu-24.04
+
+    # 3. expose step context at job level
+    outputs:
+      name: ${{ steps.generate-name.outputs.name_from_github_output }}
+    steps:
+      - name: Generate and export name
+        id: generate-name
+        run: |
+
+          # 1.1 set environment variable
+          echo "name_from_github_env=tharindu" >> "$GITHUB_ENV"
+
+          # 1.2 set step output
+          echo "name_from_github_output=tharindu" >> "$GITHUB_OUTPUT"
+
+      - name: Inspect values inside the same job
+        run: |
+
+          # 2. accessing the values inside the same job
+          echo "name (set via GITHUB_ENV):       ${name_from_github_env}"
+          echo "name (exposed via step output):  ${{ steps.generate-name.output.name_from_github_output }}"
+
+  consumer:
+    runs-on: ubuntu-24.04
+
+    needs: producer
+
+    steps:
+      - name: Inspect values created by the producer job
+
+        # 4. accessing the values inside the consumer job
+        run: |
+          echo "name (set via GITHUB_ENV):       ${name_from_github_env:-<UNSET>}" 
+          echo "name (exposed via step output):  ${{ needs.producer.outputs.name }}"
