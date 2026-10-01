@@ -25,7 +25,7 @@ jobs:
 
           # 2. accessing the values inside the same job
           echo "name (set via GITHUB_ENV):       ${name_from_github_env}"
-          echo "name (exposed via step output):  ${{ steps.generate-name.output.name_from_github_output }}"
+          echo "name (exposed via step output):  ${{ steps.generate-name.outputs.name_from_github_output }}"
 
   consumer:
     runs-on: ubuntu-24.04
