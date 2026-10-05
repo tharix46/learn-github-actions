@@ -1,3 +1,7 @@
+# upload-artifact/download-artifact actions are used to pass files between jobs
+# a cache is mainly for performance
+# an artifact is mainly for transfer/sharing
+
 name: 08-Artifacts
 on:
   workflow_dispatch:
