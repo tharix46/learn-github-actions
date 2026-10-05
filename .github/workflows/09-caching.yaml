@@ -1,0 +1,49 @@
+# cache is for speed. artifacts are for outputs.
+
+name: 09-Caching
+on:
+  workflow_dispatch:
+
+jobs:
+  # ──────────────────────────────────────────────
+  # generic cache with actions/cache.
+  # You decide what files/folders to save from a previous run and reuses them in later runs.
+  # it speeds up workflows by avoiding repeated work like:
+  # - installing dependencies
+  # - building large assets
+  # - downloading packages
+  # - regenerating files
+  # good for any project, custom build outputs, dependencies, etc.
+  # ──────────────────────────────────────────────
+  actions-cache:
+    runs-on: ubuntu-24.04
+
+    steps:
+      # attempt to restore (misses on first run)
+      - name: Restore cache
+        id: demo-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: demo-cache
+          key: demo-cache-v1
+
+      # populate directory only on miss
+      - name: Populate cache directory
+        if: steps.demo-cache.outputs.cache-hit != 'true'
+        run: |
+          echo "Cache miss - generating contents"
+          mkdir -p demo-cache
+          date > demo-cache/timestamp.txt
+
+      # save cache only if the cache was not restored (missed)
+      - name: Save cache
+        if: steps.demo-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@5cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: demo-cache
+          key: demo-cache-v1
+
+      - name: Verify cache status
+        run: |
+          echo "cache-hit? -> ${{ steps.demo-cache.outputs.cache-hit }}"
+          cat demo-cache/timestamp.txt
