@@ -1,4 +1,4 @@
-name: Artifacts
+name: 08-Artifacts
 on:
   workflow_dispatch:
 
