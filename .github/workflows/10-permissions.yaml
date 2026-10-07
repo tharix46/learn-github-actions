@@ -38,7 +38,6 @@ jobs:
     continue-on-error: true
 
     permissions:
-      # can read PR data only
       pull-requests: read
       contents: read
 
@@ -56,5 +55,24 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Confirm the failure
-        if: failure() # runs the step when an earlier step has failed
+        if: failure() # runs the step if an earlier step has failed
         run: echo "❌  Write operation was blocked as expected - token is read-only."
+
+  read-write-pr:
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Attempt to add a label (expected to succeed)
+        run: gh pr edit 4 --add-label "documentation"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Confirm the success
+        if: success()
+        run: echo "✅ Write operation succeeded!"
