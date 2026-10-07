@@ -23,3 +23,24 @@ jobs:
 
       - name: Verify AWS Login
         run: aws sts get-caller-identity
+
+  # ✅ USE THIS OIDC APPROACH INSTEAD!
+  # this approach uses GitHub's built-in OIDC provider to request a short-lived access token from AWS at runtime.
+  # we need to create a identity provider in AWS and configure it to trust GitHub's OIDC provider.
+  # we need to create an IAM role in AWS that can be assumed by GitHub Actions and grant it the necessary permissions.
+  auth-to-aws-oidc:
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+      id-token: write # this is required to requesting the JWT from GitHub's built-in OIDC provider to auth to AWS
+
+    steps:
+      - name: "Configure AWS Credentials using OIDC"
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
+        with:
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::700693143929:role/github-actions-demo-role
+
+      - name: Verify AWS Login
+        run: aws sts get-caller-identity
