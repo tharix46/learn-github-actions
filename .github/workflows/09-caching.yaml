@@ -29,7 +29,7 @@ jobs:
 
       # populate directory only on miss
       - name: Populate cache directory
-        if: steps.demo-cache.outputs.cache-hit != 'true'
+        if: ${{ steps.demo-cache.outputs.cache-hit != 'true' }}
         run: |
           echo "Cache miss - generating contents"
           mkdir -p demo-cache
@@ -37,7 +37,7 @@ jobs:
 
       # save cache only if the cache was not restored (missed)
       - name: Save cache
-        if: steps.demo-cache.outputs.cache-hit != 'true'
+        if: ${{ steps.demo-cache.outputs.cache-hit != 'true' }}
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: demo-cache
