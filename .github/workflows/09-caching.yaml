@@ -59,7 +59,7 @@ jobs:
       # every "run:" command in this job will execute from this directory unless overridden.
       # e.g.,: npm ci will run in 04-advanced-features/caching/minimal-node-project
       run:
-        working-directory: 04-advanced-features/caching/minimal-node-project
+        working-directory: caching/minimal-node-project
 
     steps:
       - uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
@@ -69,8 +69,8 @@ jobs:
           node-version: 20
           cache: npm
           # point cache action at the specific lock-file file
-          cache-dependency-path: 04-advanced-features/caching/minimal-node-project/package-lock.json
-          
+          cache-dependency-path: caching/minimal-node-project/package-lock.json
+
       - name: Install dependencies
         # --prefer-offline = use cached packages first before downloading
         # --no-audit = skip security audit during install to save time
