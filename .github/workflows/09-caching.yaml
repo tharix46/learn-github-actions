@@ -62,7 +62,7 @@ jobs:
         working-directory: caching/minimal-node-project
 
     steps:
-      - uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v5.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - uses: actions/setup-node@d7a11313b581b306c961b506cfc8971208bb03f6 # v4.4.0
         with:
