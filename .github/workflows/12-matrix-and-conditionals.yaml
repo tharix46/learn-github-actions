@@ -1,0 +1,46 @@
+name: 12-Matrix-and-Conditionals
+
+on:
+  workflow_dispatch:
+
+# with `concurrency` GitHub keeps only one active run for the same workflow on the same ref (branch/tag).
+# if a new run starts while another is still running, the older one is canceled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  matrix-job:
+    runs-on: ubuntu-24.04
+
+    # if one matrix job fails, GitHub stops starting the rest of the remaining matrix jobs
+    strategy:
+      fail-fast: true
+
+      # matrix — run the same job with multiple combinations
+      matrix:
+        number: [1, 2]
+        letter: [a, b, c]
+        exclude:
+          - number: 1
+            letter: c
+
+    steps:
+      # step 1 — run for every combo
+      - name: Run for every combo
+        run: echo "This step runs for ${{ matrix.number }}${{ matrix.letter }}"
+
+      # step 2 – run for every combo EXCEPT number=2 and letter=c
+      - name: Run every combo except 2c
+        if: ${{ ! (matrix.number == 2 && matrix.letter == 'c') }}
+        run: echo "This step runs for ${{ matrix.number }}${{ matrix.letter }}"
+
+  # this job is for simply keeping the workflow alive long enough
+  # for me to manually start another run and observe the cancellation set with
+  # concurrency: cancel-in-progress: true
+  sleep-job:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Sleep (to give time to be cancelled)
+        run: sleep 100
+        timeout-minutes: 2
