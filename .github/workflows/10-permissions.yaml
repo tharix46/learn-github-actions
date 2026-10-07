@@ -51,7 +51,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Attempt to add a label (expected to fail)
-        run: gh pr edit 4 --add-label "testing"
+        run: gh pr edit 4 --add-label "documentation"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
