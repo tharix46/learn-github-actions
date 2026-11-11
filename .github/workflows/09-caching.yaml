@@ -57,7 +57,7 @@ jobs:
 
     defaults:
       # every "run:" command in this job will execute from this directory unless overridden.
-      # e.g.,: npm ci will run in 04-advanced-features/caching/minimal-node-project
+      # e.g.,: npm ci will run in caching/minimal-node-project
       run:
         working-directory: caching/minimal-node-project
 
@@ -68,7 +68,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          # point cache action at the specific lock-file file
+          # point cache action at the specific lock-file
           cache-dependency-path: caching/minimal-node-project/package-lock.json
 
       - name: Install dependencies
