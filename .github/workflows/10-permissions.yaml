@@ -3,7 +3,9 @@ on:
   workflow_dispatch:
 
 ################
-# Default Permissions
+# GitHub automatically creates a short-lived token for every workflow run.
+# Steps use this token to interact with the GitHub API
+# Default permissions of automatically generated GITHUB_TOKEN are:
 ################
 # permissions:
 #   contents: read
