@@ -26,6 +26,6 @@ jobs:
 
     steps:
       - name: Say Hello via a Javascript Action
-        uses: actions/hello-world-javascript-action@main
+        uses: actions/hello-world-javascript-action@ad41a6c27317e688719c813b0d6a25685a9bce54 # v1.1
         with:
           who-to-greet: "Everyone"
