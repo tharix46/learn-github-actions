@@ -39,7 +39,10 @@ jobs:
 
     steps:
       - name: Notify Slack on failure
+        env:
+          SLACK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
-          curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
+          BRANCH=${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}
+          curl -X POST "$SLACK_URL" \
             -H 'Content-type: application/json' \
-            --data '{"text":"❌ *GitHub Actions Failure*\n*Workflow:* $GITHUB_WORKFLOW\n*Repo:* $GITHUB_REPOSITORY\n*Branch:* ${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}\n*Triggered by:* $GITHUB_ACTOR\n*Event:* $GITHUB_EVENT_NAME\n*Run URL:* $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\'
+            --data "{\"text\":\"❌ *GitHub Actions Failure*\n*Workflow:* $GITHUB_WORKFLOW\n*Repo:* $GITHUB_REPOSITORY\n*Branch:* $BRANCH\n*Triggered by:* $GITHUB_ACTOR\n*Event:* $GITHUB_EVENT_NAME\n*Run URL:* $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\"}"
