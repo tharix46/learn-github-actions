@@ -42,4 +42,4 @@ jobs:
         run: |
           curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
             -H 'Content-type: application/json' \
-            --data '{"text":"❌ Workflow ${{ github.workflow }} failed on ${{ github.ref_name }}"}'
+            --data '{"text":"❌ *GitHub Actions Failure*\n*Workflow:* $GITHUB_WORKFLOW\n*Repo:* $GITHUB_REPOSITORY\n*Branch:* ${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}\n*Triggered by:* $GITHUB_ACTOR\n*Event:* $GITHUB_EVENT_NAME\n*Run URL:* $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\'
