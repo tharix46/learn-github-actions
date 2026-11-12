@@ -1,0 +1,11 @@
+name: 13-Context-Variables
+
+on: workflow_dispatch
+
+jobs:
+  context-vars:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print all variables
+        run: echo "${{ toJson(github) }}"
