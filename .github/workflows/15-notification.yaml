@@ -19,8 +19,8 @@ jobs:
       - name: Build Step
         run: |
           echo "Building the app ..."
-          echo "Demo error to test failure notification"
-          exit 1
+          # echo "Demo error to test failure notification"
+          # exit 1
 
   # deploy job
   demo-deploy:
@@ -29,7 +29,10 @@ jobs:
 
     steps:
       - name: Deploy Step
-        run: echo "Deploying the app ..."
+        run: |
+          echo "Deploying the app ..."
+          echo "Demo error to test failure notification"
+          exit 1
 
   # failure notification job
   failure-notification:
@@ -45,4 +48,4 @@ jobs:
           BRANCH=${GITHUB_HEAD_REF:-$GITHUB_REF_NAME}
           curl -X POST "$SLACK_URL" \
             -H 'Content-type: application/json' \
-            --data "{\"text\":\"❌ *GitHub Actions Failure*\n*Workflow:* $GITHUB_WORKFLOW\n*Repo:* $GITHUB_REPOSITORY\n*Branch:* $BRANCH\n*Triggered by:* $GITHUB_ACTOR\n*Event:* $GITHUB_EVENT_NAME\n*Run URL:* $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\"}"
+            --data "{\"text\":\"❌ *GitHub Actions Failure*\n\n*Workflow:* $GITHUB_WORKFLOW\n*Repo:* $GITHUB_REPOSITORY\n*Branch:* $BRANCH\n*Triggered by:* $GITHUB_ACTOR\n*Event:* $GITHUB_EVENT_NAME\n*Run URL:* $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\"}"
