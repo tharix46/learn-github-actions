@@ -1,0 +1,26 @@
+name: 14-If-Conditions
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  demo-build:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+
+    steps:
+      - name: Build Step
+        run: echo "Building the app ..."
+
+  demo-deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
+
+    steps:
+      - name: Deploy Step
+        run: echo "Deploying the app ..."
