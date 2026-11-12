@@ -1,0 +1,45 @@
+name: 15-Notification
+
+on:
+  # workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # build job
+  demo-build:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+
+    steps:
+      - name: Build Step
+        run: |
+          echo "Building the app ..."
+          echo "Demo error to test failure notification"
+          exit 1
+
+  # deploy job
+  demo-deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
+
+    steps:
+      - name: Deploy Step
+        run: echo "Deploying the app ..."
+
+  # failure notification job
+  failure-notification:
+    needs: [demo-build, demo-deploy]
+    runs-on: ubuntu-latest
+    if: failure()
+
+    steps:
+      - name: Notify Slack on failure
+        run: |
+          curl -X POST ${{ secrets.SLACK_WEBHOOK_URL }} \
+            -H 'Content-type: application/json' \
+            --data '{"text":"❌ Workflow ${{ github.workflow }} failed on ${{ github.ref_name }}"}'
