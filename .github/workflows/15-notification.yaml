@@ -19,8 +19,8 @@ jobs:
       - name: Build Step
         run: |
           echo "Building the app ..."
-          # echo "Demo error to test failure notification"
-          # exit 1
+          echo "Demo error to test failure notification"
+          exit 1
 
   # deploy job
   demo-deploy:
@@ -29,10 +29,7 @@ jobs:
 
     steps:
       - name: Deploy Step
-        run: |
-          echo "Deploying the app ..."
-          echo "Demo error to test failure notification"
-          exit 1
+        run: echo "Deploying the app ..."
 
   # failure notification job
   failure-notification:
