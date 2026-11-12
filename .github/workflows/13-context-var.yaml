@@ -11,5 +11,20 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Print all variables
+      - name: Print all github context variables
         run: echo "${{ toJson(github) }}"
+
+      - name: Print all runner context variables
+        run: echo "${{ toJson(runner) }}"
+
+      - name: Use context variables
+        run: |
+          echo "workflow triggered by: ${{ github.event_name }} event"
+          echo "repository name: ${{ github.repository }}"
+          echo "branch name: ${{ github.ref_name }}"
+          echo "runner os: ${{ runner.os }}"
+          echo "runner architecture: ${{ runner.arch }}"
+
+      # env vars are also there inside the runner
+      - name: Print environment variable
+        run: echo "${GITHUB_SHA}"
