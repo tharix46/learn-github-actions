@@ -1,0 +1,130 @@
+name: 18-Python-Project
+
+on:
+  # workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "python-project/**"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "python-project/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: 3.9
+
+      - run: pip install ruff
+
+      - run: ruff check .
+        working-directory: python-project
+        continue-on-error: true
+
+  test:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: 3.9
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        working-directory: python-project
+
+      - name: Run tests
+        run: pytest test_app.py -v
+        working-directory: python-project
+
+  docker:
+    runs-on: ubuntu-latest
+
+    if: ${{ github.event_name == 'push'}}
+
+    outputs:
+      short_sha: ${{ steps.short-sha.outputs.short_sha }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set short SHA
+        id: short-sha
+        run: echo "short_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Login to Docker
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Docker build and Push
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        with:
+          context: python-project
+          file: python-project/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/gha-py-proj:${{ steps.short-sha.outputs.short_sha }}
+
+  update-k8s:
+    runs-on: ubuntu-latest
+
+    needs: docker
+
+    if: ${{ github.event_name == 'push' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Update k8s deployment manifest
+        env:
+          SHORT_SHA: ${{ needs.docker.outputs.short_sha }}
+        run: |
+          # Replace the image tag in the deployment file
+          sed -i "s|${{ secrets.DOCKER_USERNAME }}/gha-py-proj:.*|${{ secrets.DOCKER_USERNAME }}/gha-py-proj:${SHORT_SHA}|g" ./python-project/k8s/deploy.yaml
+
+          git config user.name "gitHub-actions[bot]"
+          git config user.email "github-actions@noreply"
+          git add python-project/k8s/deploy.yaml
+          git diff --cached --exit-code || git commit -m "ci: update python-project image tag to ${SHORT_SHA} by GHA"
+          git push origin main
+
+  Notification:
+    needs: [lint, test, docker, update-k8s]
+    if: failure()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify Slack on workflow completion
+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d # 4.0.0
+        with:
+          webhook-type: incoming-webhook
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+             "text": "*❌ GitHub Actions Failure*\n\n*Workflow:* ${{ github.workflow }}\n*Repo:* ${{ github.repository }}\n*Branch:* ${{ github.ref_name }}\n*Triggered by:* ${{ github.actor }}\n*Run:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Run>"
+            }
