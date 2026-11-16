@@ -1,0 +1,10 @@
+name: 17-Call-Reusable-Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  call-greeting:
+    uses: ./.github/workflows/16-reusable-workflow.yaml
+    with:
+      name: "Tharindu"
